@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Just Us 💖</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffdee9, #b5fffc);
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin: 15px 0;
+    }
+
+    .heart {
+      font-size: 3rem;
+      animation: beat 1.2s infinite;
+      color: #ff4d6d;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    button {
+      margin-top: 20px;
+      background: #ff4d6d;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 30px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #e63956;
+    }
+
+    .days-counter {
+      font-size: 1.2rem;
+      margin: 15px 0;
+      font-weight: bold;
+      color: #ff4d6d;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="love.jpg" alt="Us" style="width:100%; border-radius:18px; margin-bottom:20px;" />
+    <div class="heart">❤️</div>
+    <h1>Hiii Smokeyyy 💖</h1>
+    <p>
+      This little page is just a reminder that no matter how busy life gets,
+      my heart always finds its way back to you. Lol what's the point of having a tech girlfriend? 😋
+    </p>
+    <p>
+      Thank you for loving me, choosing me, and being my safe place.
+	  Thank you for ho nthusa with everything that i need help with even when i am moody thank you for keeping up with me.
+	  I promise to make the rest of our relationship the best days of your life 😆 
+      I’m grateful for you .... every single day.
+    </p>
+    <p>
+      Moratuoa oaka, when you read this, just know: you are deeply loved.
+    </p>
+    <div class="days-counter" id="daysTogether"></div>
+    <button onclick="alert('I love you more than words 💕')">Tap for a kiss 💋</button>
+    <div class="footer">
+      Forever yours, Stufuza 😂 💞
+    </div>
+  </div>
+  <script>
+    function calculateDaysTogether() {
+      const startDate = new Date('2024-12-27');
+      const today = new Date();
+      const diffTime = Math.abs(today - startDate);
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      document.getElementById('daysTogether').innerText = `Days together: ${diffDays} ❤️`;
+    }
+    calculateDaysTogether();
+  </script>
+</body>
+</html>
+
