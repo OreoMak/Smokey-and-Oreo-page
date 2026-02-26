@@ -2,103 +2,209 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Smokey & Oreo – Daily Diary</title>
+  <title>Our Daily Check-In 💌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fdfbfb, #ebedee);
+      color: #333;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: auto;
+      background: #fff;
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+    }
+
+    h1 {
+      text-align: center;
+      color: #ff4d6d;
+    }
+
+    .intro {
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: 600;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      margin-top: 8px;
+      font-family: inherit;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .btn {
+      margin-top: 25px;
+      width: 100%;
+      background: #ff4d6d;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #e63956;
+    }
+
+    .comfort {
+      margin-top: 15px;
+      padding: 15px;
+      background: #fff0f3;
+      border-radius: 12px;
+      display: none;
+      font-size: 0.95rem;
+    }
+
+    .entries {
+      margin-top: 40px;
+    }
+
+    .entry {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+
+    .export-btn {
+      margin-top: 10px;
+      background: #6c63ff;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="container">
+    <h1>Our Daily Check-In 💖</h1>
 
-  <h2>💗 Daily Check-In</h2>
+    <div class="intro">
+      We always ask each other: <br/>
+      <strong>“On a scale of 1 to 10, how was your day?”</strong><br/><br/>
+      Life gets busy, emotions get heavy, and sometimes we don’t fully unpack the answer.
+      So I thought… what if we slow down, reflect, and leave little pieces of our hearts
+      here — for us, for love, for understanding. 🤍<br/><br/>
+      <em>“Be completely humble and gentle; be patient, bearing with one another in love.” – Ephesians 4:2</em>
+    </div>
 
-  <form id="diaryForm">
-    <label>🌈 How was today? (1–10)</label><br/>
-    <input type="number" id="rating" min="1" max="10" required /><br/><br/>
+    <label>On a scale of 1–10, how was your day?</label>
+    <input type="number" id="rating" min="1" max="10" />
 
-    <div id="conditionalQuestion"></div>
+    <label>If it was hard, what could make it better?  
+      If it was good, what made it good?</label>
+    <textarea id="reflection" rows="3"></textarea>
 
-    <label>🙏 What are you grateful for today?</label><br/>
-    <textarea id="gratitude" required></textarea><br/><br/>
+    <label>What are you grateful for today?</label>
+    <textarea id="gratitude" rows="2"></textarea>
 
-    <label>📸 Optional photo</label><br/>
-    <input type="file" id="photo" accept="image/*" /><br/><br/>
+    <label>Optional photo 📸</label>
+    <input type="file" id="photo" />
 
-    <button type="submit">💖 Save our memory</button>
-  </form>
+    <div class="comfort" id="comfortMsg">
+      Hey love 🤍  
+      Even hard days don’t change how deeply you are loved.
+      Tomorrow is new. We are a team. God is with us.
+    </div>
 
-  <p id="message"></p>
+    <button class="btn" onclick="saveEntry()">Save today’s check-in 💌</button>
+    <button class="btn export-btn" onclick="exportPDF()">Export diary as PDF 📄</button>
 
-  <!-- Firebase -->
+    <div class="entries" id="entries"></div>
+  </div>
+
+  <!-- Firebase + Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } 
+      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCZSQxvmv6Zxxb-Pp3Yosx5fK22eaGkxzE",
       authDomain: "smokey-oreo-diary.firebaseapp.com",
-      projectId: "smokey-oreo-diary",
-      storageBucket: "smokey-oreo-diary.firebasestorage.app",
-      messagingSenderId: "924647667837",
-      appId: "1:924647667837:web:c76ddf5c90b7ec88e55914"
+      projectId: "smokey-oreo-diary"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const storage = getStorage(app);
 
-    const ratingInput = document.getElementById("rating");
-    const conditionalDiv = document.getElementById("conditionalQuestion");
+    async function saveEntry() {
+      const rating = Number(document.getElementById("rating").value);
+      const reflection = document.getElementById("reflection").value;
+      const gratitude = document.getElementById("gratitude").value;
 
-    ratingInput.addEventListener("input", () => {
-      const r = ratingInput.value;
-      if (r < 5) {
-        conditionalDiv.innerHTML = `
-          <label>🤍 What could make today better?</label><br/>
-          <textarea id="reflection" required></textarea><br/><br/>
-        `;
-      } else {
-        conditionalDiv.innerHTML = `
-          <label>✨ What made today good?</label><br/>
-          <textarea id="reflection" required></textarea><br/><br/>
-        `;
-      }
-    });
-
-    document.getElementById("diaryForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const today = new Date().toISOString().split("T")[0];
-      const docRef = doc(db, "diaryEntries", today);
-
-      const existing = await getDoc(docRef);
-      if (existing.exists()) {
-        alert("💌 You already wrote today’s entry.");
+      if (!rating) {
+        alert("Please rate your day 💗");
         return;
       }
 
-      let photoURL = "";
-      const file = document.getElementById("photo").files[0];
-      if (file) {
-        const photoRef = ref(storage, `photos/${today}`);
-        await uploadBytes(photoRef, file);
-        photoURL = await getDownloadURL(photoRef);
+      if (rating < 5) {
+        document.getElementById("comfortMsg").style.display = "block";
       }
 
-      await setDoc(docRef, {
-        rating: ratingInput.value,
-        reflection: document.getElementById("reflection").value,
-        gratitude: document.getElementById("gratitude").value,
-        photoURL,
-        date: today
+      const today = new Date().toISOString().split("T")[0];
+
+      await addDoc(collection(db, "diaryEntries"), {
+        date: today,
+        rating,
+        reflection,
+        gratitude,
+        timestamp: new Date()
       });
 
-      document.getElementById("message").innerText =
-        ratingInput.value < 5
-          ? "🤍 God is near the broken-hearted. Tomorrow is gentle."
-          : "✨ Thank God for today’s joy. Love lives here.";
+      loadEntries();
+      alert("Saved with love 💞");
+    }
 
-      e.target.reset();
-    });
+    async function loadEntries() {
+      const entriesDiv = document.getElementById("entries");
+      entriesDiv.innerHTML = "<h3>Our shared diary 🫶</h3>";
+
+      const q = query(collection(db, "diaryEntries"), orderBy("timestamp", "desc"));
+      const snapshot = await getDocs(q);
+
+      snapshot.forEach(doc => {
+        const e = doc.data();
+        entriesDiv.innerHTML += `
+          <div class="entry">
+            <strong>${e.date}</strong><br/>
+            Rating: ${e.rating}/10<br/>
+            Reflection: ${e.reflection}<br/>
+            Grateful for: ${e.gratitude}
+          </div>`;
+      });
+    }
+
+    loadEntries();
+
+    function exportPDF() {
+      window.print();
+    }
+
+    window.exportPDF = exportPDF;
   </script>
-
 </body>
 </html>
