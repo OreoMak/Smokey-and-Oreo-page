@@ -1,1 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smokey & Oreo – Daily Diary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
 
+  <h2>💗 Daily Check-In</h2>
+
+  <form id="diaryForm">
+    <label>🌈 How was today? (1–10)</label><br/>
+    <input type="number" id="rating" min="1" max="10" required /><br/><br/>
+
+    <div id="conditionalQuestion"></div>
+
+    <label>🙏 What are you grateful for today?</label><br/>
+    <textarea id="gratitude" required></textarea><br/><br/>
+
+    <label>📸 Optional photo</label><br/>
+    <input type="file" id="photo" accept="image/*" /><br/><br/>
+
+    <button type="submit">💖 Save our memory</button>
+  </form>
+
+  <p id="message"></p>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCZSQxvmv6Zxxb-Pp3Yosx5fK22eaGkxzE",
+      authDomain: "smokey-oreo-diary.firebaseapp.com",
+      projectId: "smokey-oreo-diary",
+      storageBucket: "smokey-oreo-diary.firebasestorage.app",
+      messagingSenderId: "924647667837",
+      appId: "1:924647667837:web:c76ddf5c90b7ec88e55914"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const ratingInput = document.getElementById("rating");
+    const conditionalDiv = document.getElementById("conditionalQuestion");
+
+    ratingInput.addEventListener("input", () => {
+      const r = ratingInput.value;
+      if (r < 5) {
+        conditionalDiv.innerHTML = `
+          <label>🤍 What could make today better?</label><br/>
+          <textarea id="reflection" required></textarea><br/><br/>
+        `;
+      } else {
+        conditionalDiv.innerHTML = `
+          <label>✨ What made today good?</label><br/>
+          <textarea id="reflection" required></textarea><br/><br/>
+        `;
+      }
+    });
+
+    document.getElementById("diaryForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const today = new Date().toISOString().split("T")[0];
+      const docRef = doc(db, "diaryEntries", today);
+
+      const existing = await getDoc(docRef);
+      if (existing.exists()) {
+        alert("💌 You already wrote today’s entry.");
+        return;
+      }
+
+      let photoURL = "";
+      const file = document.getElementById("photo").files[0];
+      if (file) {
+        const photoRef = ref(storage, `photos/${today}`);
+        await uploadBytes(photoRef, file);
+        photoURL = await getDownloadURL(photoRef);
+      }
+
+      await setDoc(docRef, {
+        rating: ratingInput.value,
+        reflection: document.getElementById("reflection").value,
+        gratitude: document.getElementById("gratitude").value,
+        photoURL,
+        date: today
+      });
+
+      document.getElementById("message").innerText =
+        ratingInput.value < 5
+          ? "🤍 God is near the broken-hearted. Tomorrow is gentle."
+          : "✨ Thank God for today’s joy. Love lives here.";
+
+      e.target.reset();
+    });
+  </script>
+
+</body>
+</html>
