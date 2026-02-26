@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Just Us 💖</title>
+
   <style>
     body {
       margin: 0;
@@ -82,42 +83,102 @@
       font-weight: bold;
       color: #ff4d6d;
     }
+
+    /* NEW diary button styling */
+    .diary-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 22px;
+      border-radius: 30px;
+      background: #6c63ff;
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    .diary-btn:hover {
+      background: #554ee0;
+    }
   </style>
 </head>
+
 <body>
   <div class="card">
     <img src="love.jpg" alt="Us" style="width:100%; border-radius:18px; margin-bottom:20px;" />
+
     <div class="heart">❤️</div>
+
     <h1>Hiii Smokeyyy 💖</h1>
+
     <p>
       This little page is just a reminder that no matter how busy life gets,
-      my heart always finds its way back to you. Lol what's the point of having a tech girlfriend? 😋
+      my heart always finds its way back to you.
+      Lol what's the point of having a tech girlfriend? 😋
     </p>
+
     <p>
       Thank you for loving me, choosing me, and being my safe place.
-	  Thank you for ho nthusa with everything that i need help with even when i am moody thank you for keeping up with me.
-	  I promise to make the rest of our relationship the best days of your life 😆 
+      Thank you for ho nthusa with everything that i need help with even when i am moody,
+      thank you for keeping up with me.
+      I promise to make the rest of our relationship the best days of your life 😆
       I’m grateful for you .... every single day.
     </p>
+
     <p>
       Moratuoa oaka, when you read this, just know: you are deeply loved.
     </p>
+
     <div class="days-counter" id="daysTogether"></div>
-    <button onclick="alert('I love you more than words 💕')">Tap for a kiss 💋</button>
+
+    <button onclick="alert('DWA!! 🤏😂❤')">
+      Tap for a kiss 💋
+    </button>
+
+    <!-- 👇 ADDED UNDER TAP FOR KISS -->
+    <br/>
+    <a href="diary.html" class="diary-btn">
+      💌 Tap to make your daily check-in
+    </a>
+
     <div class="footer">
       Forever yours, Stufuza 😂 💞
     </div>
   </div>
+
+  <!-- Days together script -->
   <script>
     function calculateDaysTogether() {
       const startDate = new Date('2024-12-27');
       const today = new Date();
       const diffTime = Math.abs(today - startDate);
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      document.getElementById('daysTogether').innerText = `Days together: ${diffDays} ❤️`;
+      document.getElementById('daysTogether').innerText =
+        `Days together: ${diffDays} ❤️`;
     }
     calculateDaysTogether();
   </script>
+
+  <!-- 🔥 FIREBASE (SAFE, MODULE MODE) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getStorage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCZSQxvmv6Zxxb-Pp3Yosx5fK22eaGkxzE",
+      authDomain: "smokey-oreo-diary.firebaseapp.com",
+      projectId: "smokey-oreo-diary",
+      storageBucket: "smokey-oreo-diary.firebasestorage.app",
+      messagingSenderId: "924647667837",
+      appId: "1:924647667837:web:c76ddf5c90b7ec88e55914",
+      measurementId: "G-2N0W1VZH4G"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // (No logic yet — this is just initialization)
+  </script>
 </body>
 </html>
-
